@@ -1,2 +1,3 @@
 # fe-code-guidelines
-Code Guide Lines for Front-End
+
+前端代码规范
