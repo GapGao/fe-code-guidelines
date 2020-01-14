@@ -95,7 +95,7 @@ if ((/class="text-layer"><\/div>/.test(lagouTestHtml)
 1. 正则表达式，建议注释里补充一个符合pattern的例子
 2. 复杂的if判断条件
 3. 复杂的React组件的state或props
-4. CSS里的各种谜之calc
+4. CSS里的各种谜之calc、z-index
 
 这些地方都应该补充注释
 
@@ -652,6 +652,75 @@ function CandidateHeader(props) {
 }
 ```
 
+## 组件必须要写PropType定义
+
+便于理解代码，否则其他人如何使用组件是不确定的
+
+👎
+```js
+class MyComponent extends React.Component {
+  ...
+};
+```
+
+👍
+```js
+class MyComponent extends React.Component {
+  ...
+};
+
+MyComponent.propTypes = {
+  a: PropTypes.number,
+  b: PropTypes.string,
+};
+```
+
+## 组件的jsx超过200行，或者组件本身超过500行，应该考虑拆分
+
+过大的jsx和组件很难维护，阅读和理解代码很困难。
+
+👎
+```
+├──MyComponent.js # 1000行
+```
+
+拆分的方式，建议以原来的组件名称简历目录，然后在这个目录中拆分成多个组件，在index.js中导出组件。这样拆分的好处是组件的引用方式不变，就像下面这样：
+
+👍
+```
+├── MyComponent
+│   ├── Header.js # 300行
+│   ├── Footer.js # 300行
+│   ├── Body.js # 400行
+│   └── index.js # 10行
+```
+
+## 一个文件只export一个组件
+
+这是一个会带来潜在好处的规则。如果不做限制，一个文件可以导出多个组件，那大家就容易把一些“相关”的组件都放在一个文件里，导致这个文件过大。如果遵守这个规范，那么就必须拆分成多个文件，从一定程度上可以避免文件过长的情况。
+
+如果你觉得拆分成多个组件看着乱，那么可以新建一个目录然后将拆分后的一系列组件放在这个目录下，形成一个小的局部。
+
+👎
+```js
+export class MyComponent1 {
+  ...
+}
+
+export class MyComponent2 {
+  ...
+}
+```
+
+👍
+```js
+// 一个文件只导出一个组件
+export class MyComponent1 {
+  ...
+}
+```
+
+
 ## 禁止在render中出现副作用
 
 render应该是纯函数，因为它会被频繁调用，这是React这个框架的运行特性决定的。如果在render函数中引入副作用，~~你的亲人将会远离你，朋友将会唾弃你~~各种诡异的问题将接踵而来。
@@ -673,9 +742,9 @@ class candidateHeader extends React.Component {
 
 幸运地是React16里已经将这几个API追加了`UNSAFE_`的前缀，不要头铁去用他们。
 
-## 尽量避免props透传
+## 避免props透传
 
-透传props的意思是某个组件将props原封不动地又传递给了children，这种写法增加了组件之间的无意义耦合，不论是开发还是维护成本都很高。组件透传props就好像一个对外声称100平的房子实际有50平是公摊面积。
+透传props的意思是某个组件没有用到props而是将prop原封不动地又传递给了children，这种写法增加了组件之间的无意义耦合，不论是开发还是维护成本都很高。组件透传props就好像一个对外声称100平的房子实际有50平是公摊面积。
 
 👎
 ```js
@@ -701,11 +770,198 @@ component4(prop)  component5(prop)
 
 其实这种情况还是蛮常见的，也没什么好办法，但如果component1的state来自react-redux，更好的做法是用直接从store里取，不要吝惜connect。
 
-##
+## 禁止用spread运算符传递props
+
+spread运算符无法显式地看到究竟传了什么props，维护成本很高。
+
+👎
+```js
+// 这里我们无法明确得知究竟给MyComponent传了什么props，必须得看data的定义
+<MyComponent {...data}>
+```
+
+👍
+```js
+// 这样虽然多写了点代码，但是明确多了
+<MyComponent a={data.a} b={data.b} c={data.c}>
+```
+
+## 禁止无意义的jsx嵌套
+
+没有意义，反而增加了代码缩进。
+
+👎
+```js
+// 假设这里的div嵌套是无意义的
+<div>
+  <MyComponent>
+</div>
+```
+
+👍
+```js
+// 应该去掉无意义的div
+<MyComponent>
+```
+
+## Redux action 遵从FSA标准
+
+[FSA(Flux Standard Action)标准](https://github.com/acdlite/flux-standard-action)约定的action应该是如下形式：
+
+👍
+```js
+{
+  type: UPDATE_CANDIDATES, // action类型
+  payload: { candidates }, // 数据部分，以object形式传入
+  meta: { transition }, // 配置部分，以object形式传入
+}
+```
+
+## 局部的，不需要全局共享的状态不要放在redux里
+
+redux管理全局状态的地方，相当于是一个公共的储物空间，如果不加以限制，任何东西都塞在公共空间里，那每个人想在里面找自己的东西就很困难，有时候可能还会错拿其他人的东西。而且，由于redux是全局的，内存回收比较困难，容易引发性能问题。因此，对于那些局部的（或者只在相邻几个组件里共享的）状态，没必要也不应该放在redux里。
+
+很多时候loading状态就是一个典型的局部状态，类似的还有表单的校验错误，请求的状态等。
 
 # 模块系统
 
+## 除非特殊原因，总是使用import而不是require
+
+ES6的模块系统是静态的模块系统，可以在编译阶段被解析静态分析，有利于及早发现错误，而且对IDE很友好，而CommonJS规范的模块系统是动态加载，只有在运行时才确定最终的引用关系。
+
+👎
+```js
+const a = require('./a.js');
+```
+
+👍
+```js
+import a from './a.js';
+```
+
+## named export/import 和 default export/import 必须正确匹配
+
+按照ES6的标准，named import只能与named export匹配，比如：
+
+👍
+```js
+// a.js
+export { a };
+
+// b.js
+import { a } from './a.js';
+```
+
+default import只能与default export匹配，比如：
+
+👍
+```js
+// a.js
+export default a;
+
+// b.js
+import a from './a.js';
+```
+
+但由于babel的bug，二者混用也可以正常编译，比如：
+
+👎
+```js
+// a.js
+export default a;
+
+// b.js
+import { key } from './a.js';
+```
+
+因为上面的写法会被babel转义成大概是下面这种等价形式：
+
+```js
+const { key } = require('./a.js');
+```
+
+相当于是加载了一个模块，然后将其当成了object立即执行了解构操作，在代码存在环状依赖的情况下，可能遇到执行报错的情况（因为此时模块尚未被加载，解构报错了）。不过这个现象在前端通常不会遇到，因为前端模块的依赖层级通常比较浅，较少出现复杂依赖导致的环状引用的情况。后端node代码比较容易出现这个问题。
+
+所以，`named import/export` 和 `default import/export` 不能混用。
+
+## 先import npm依赖，其次import本地依赖
+
+这只是一个规则，让代码更加整齐，便于理解。
+
+👎
+```js
+import a from './a.js';
+import lodash from 'lodash';
+```
+
+👍
+```js
+import lodash from 'lodash';
+import a from './a.js';
+```
+
 # 变量
+
+## 禁止magic number/string
+
+不是所有的raw string/number都是magic number/string，只有可枚举的raw number/string才算是magic number/string。
+
+magic number/string的问题是维护性太差，首先是代码不易理解，其次是如果写错了没有任何提示。正确的做法是定义成constant常量。
+
+👎
+```js
+// 如果把success不小心拼错了，写成了succses，编译时不会有任何报错，执行的时候也不会报错
+if (status === 'success') {
+  ...
+}
+
+// 3代表什么含义？完全不清楚
+if (code === 3) {
+  ...
+}
+```
+
+👍
+```js
+// 用IDE写代码时，敲了STATUS.能自动补全SUCCESS，想写错都难，而且如果敲错了，IDE会直接报错
+if (status === STATUS.SUCCESS) {
+  ...
+}
+
+// 可以看常量的出处得知是什么意思
+if (code === CODE.ONSITE) {
+  ...
+}
+```
+
+## 变量必须赋初始值
+
+有些情况下，没有初始值的变量可能导致意想不到的bug
+
+👎
+```js
+let a;
+```
+
+👍
+```js
+let a = [];
+```
+
+## 变量的类型应该始终保持一致
+
+一会是number类型，一会是string类型，写出来的代码非常令人迷惑，维护成本很高。
+
+👎
+```js
+let status = null; // 这里status的初始值是null，是一个引用类型的空值
+
+if (condition) {
+  status = new Error(); // 类型变成了Error
+} else {
+  status = 'success'; // 类型是string
+}
+```
 
 # 函数
 
