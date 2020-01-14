@@ -125,7 +125,7 @@ const isEmpty = value === 0 || !value;
 
 # Naming
 
-名命应该按这样的优先级考虑：
+命名应该按这样的优先级考虑：
 
 简洁且明确的名字 > 啰嗦但明确的名字 > 简洁但不明确的名字 > 啰嗦且不明确的名字
 
@@ -410,7 +410,7 @@ function updateIntervew() {
 const updateInterview = 3;
 ```
 
-## DOM引用的名命以$做前缀
+## DOM引用的命名以$做前缀
 
 DOM的API不太一样，加上$更加明显，有利于理解代码逻辑
 
