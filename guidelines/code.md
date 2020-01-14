@@ -116,7 +116,7 @@ const isEmpty = value === 0 || !value;
 
 ## 凡重要的注释，建议增加作者的名字
 
-虽然我们可以通过git blame找到每一行代码的owner，但由于代码可能会因为挪动位置、调整缩进等原因转移“owner”，所以对于比较重要的注释，建议显式地著名owner，方便其他人维护。
+虽然我们可以通过git blame找到每一行代码的owner，但由于代码可能会因为挪动位置、调整缩进等原因转移“owner”，所以对于比较重要的注释，建议显式地注名owner，方便其他人维护。
 
 👍
 ```js
@@ -276,11 +276,11 @@ const candidate = blablabla;
 
 但是有2个例外
 
-一是已经约定俗称的循环索引i，j，k，当然最好也少写
+一是已经约定俗成的循环索引i，j，k，当然最好也少写
 
 👍
 ```js
-for (let i = 0; i < 100; i++) { // 这里的i由于已经约定俗称了，不影响代码可读性
+for (let i = 0; i < 100; i++) { // 这里的i由于已经约定俗成了，不影响代码可读性
   ...
 }
 ```
@@ -407,7 +407,7 @@ function updateIntervew() {
 
 👎
 ```js
-const updateInterview = 3;
+const updateInterview = 3; // 看着是个函数，实际是个变量
 ```
 
 ## DOM引用的命名以$做前缀
