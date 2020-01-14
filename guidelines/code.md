@@ -626,7 +626,82 @@ float这个属性原本被发明出来的作用就不是用来定位的，这个
 
 # React
 
+## 组件名首字母大写，即使functional component也是一样
 
+保持统一，且容易理解
+
+👎
+```js
+class candidateHeader extends React.Component {
+  ...
+}
+
+function candidateHeader(props) {
+  ...
+}
+```
+
+👍
+```js
+class CandidateHeader extends React.Component {
+  ...
+}
+
+function CandidateHeader(props) {
+  ...
+}
+```
+
+## 禁止在render中出现副作用
+
+render应该是纯函数，因为它会被频繁调用，这是React这个框架的运行特性决定的。如果在render函数中引入副作用，~~你的亲人将会远离你，朋友将会唾弃你~~各种诡异的问题将接踵而来。
+
+👎
+```js
+class candidateHeader extends React.Component {
+  render() {
+    this.setState({ msg: 'hello' });
+  }
+}
+```
+
+可以考虑将副作用的代码放在生命周期函数里（比如componentDidUpdate，componentDidMount）。
+
+## 避免使用`componentWillMount`，`componentWillReceiveProps`，`componentWillUpdate`
+
+为什么以及如何替代见React的[官方blog](https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html)
+
+幸运地是React16里已经将这几个API追加了`UNSAFE_`的前缀，不要头铁去用他们。
+
+## 尽量避免props透传
+
+透传props的意思是某个组件将props原封不动地又传递给了children，这种写法增加了组件之间的无意义耦合，不论是开发还是维护成本都很高。组件透传props就好像一个对外声称100平的房子实际有50平是公摊面积。
+
+👎
+```js
+class ParentComponent extends React.Component {
+  render() {
+    const { a, b, c, d } = this.props; // a, b, c, d在当前组件中没有用到，原封不动传给了ChildComponent
+    return <ChildComponent a={a} b={b} c={c} d={d}>
+  }
+}
+```
+
+通常产生这种写法是因为组件间共享了状态，并且共享的状态距离组件有些远，就像下面这样：
+
+```
+状态state存在component1，但是component4和component5才是真正用到的地方
+
+          component1(state)
+             /      \
+component2(prop)  component3(prop)
+       |                |
+component4(prop)  component5(prop)
+```
+
+其实这种情况还是蛮常见的，也没什么好办法，但如果component1的state来自react-redux，更好的做法是用直接从store里取，不要吝惜connect。
+
+##
 
 # 模块系统
 
