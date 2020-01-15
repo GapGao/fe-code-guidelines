@@ -902,6 +902,21 @@ import a from './a.js';
 
 # 变量
 
+## 一行只声明一个变量
+
+一行申明多个变量，挤在一起不好看，而且也不好补充注释，应该一行一个变量，清晰又美观。
+
+👎
+```js
+const a = 2, b = 3;
+```
+
+👍
+```js
+const a = 2;
+const b = 3;
+```
+
 ## 禁止magic number/string
 
 不是所有的raw string/number都是magic number/string，只有可枚举的raw number/string才算是magic number/string。
@@ -934,18 +949,56 @@ if (code === CODE.ONSITE) {
 }
 ```
 
-## 变量必须赋初始值
+## 尽晚定义，尽早初始化
 
-有些情况下，没有初始值的变量可能导致意想不到的bug
+Declared when needed, initialized as soon as possible.
+一些代码风格习惯在函数最开头先把函数要用到的变量都定义一遍，这不是好的做法，因为这让变量的定义和实际使用距离更远了，不利于理解代码
 
 👎
 ```js
-let a;
+function foo() {
+  let a;
+
+  blablabla... // 一大段逻辑
+
+  a = ... // 这里才用到了a
+}
 ```
+
+更好的做法是在用到的时候才定义变量
 
 👍
 ```js
-let a = [];
+function foo() {
+  blablabla... // 一大段逻辑
+
+  let a;
+  a = ... // 定义后立即使用，理解起来容易多了
+}
+```
+
+尽早初始化其实是要求变量都必须有初始值，因为有些时候没有初始值可能会引发诡异的bug，尤其是在多人协作的时候。
+
+👎
+```js
+function foo() {
+  let a;
+
+  blablabla... // 一大段逻辑
+
+  a = true; // 这里才初始化，如果其他人不清楚，在前面就开始使用a，那a的值是一个未定义的值，很容易出问题
+}
+```
+
+更好的做法是在用到的时候才定义变量
+
+👍
+```js
+function foo() {
+  let a = false; // 定义a的同时已经赋予了初始值，那么后续怎么用至少在一个可控的范围
+
+  blablabla... // 一大段逻辑
+}
 ```
 
 ## 变量的类型应该始终保持一致
