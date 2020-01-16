@@ -1,0 +1,291 @@
+extends: prettier
+parser: babel-eslint
+parserOptions:
+  sourceType: module
+  ecmaFeatures:
+    classes: true
+    modules: true
+    blockBindings: true
+    forOf: true
+    jsx: true
+
+env:
+  es6: true
+
+rules:
+  # [Possible Errors](https://eslint.org/docs/rules/#possible-errors)
+    for-direction: error # enforce "for" loop update clause moving the counter in the right direction.
+    getter-return: error # enforce `return` statements in getters
+    no-async-promise-executor: error # disallow using an async function as a Promise executor
+    no-await-in-loop: off # disallow `await` inside of loops
+    no-compare-neg-zero: error # disallow comparing against -0
+    no-cond-assign: [error, always] # disallow assignment operators in conditional expressions
+    no-console: off # disallow the use of `console`
+    no-constant-condition: error # disallow constant expressions in conditions
+    no-control-regex: error # disallow control characters in regular expressions
+    no-debugger: error # disallow the use of `debugger`
+    no-dupe-args disallow duplicate arguments in `function` definitions
+    no-dupe-else-if disallow duplicate conditions in if-else-if chains
+    no-dupe-keys disallow duplicate keys in object literals
+    no-duplicate-case disallow duplicate case labels
+    no-empty disallow empty block statements
+    no-empty-character-class disallow empty character classes in regular expressions
+    no-ex-assign disallow reassigning exceptions in `catch` clauses
+    no-extra-boolean-cast disallow unnecessary boolean casts
+    no-extra-parens disallow unnecessary parentheses
+    no-extra-semi disallow unnecessary semicolons
+    no-func-assign disallow reassigning `function` declarations
+    no-import-assign disallow assigning to imported bindings
+    no-inner-declarations disallow variable or `function` declarations in nested blocks
+    no-invalid-regexp disallow invalid regular expression strings in `RegExp` constructors
+    no-irregular-whitespace disallow irregular whitespace
+    no-misleading-character-class disallow characters which are made with multiple code points in character class syntax
+    no-obj-calls disallow calling global object properties as functions
+    no-prototype-builtins disallow calling some `Object.prototype` methods directly on objects
+    no-regex-spaces disallow multiple spaces in regular expressions
+    no-setter-return disallow returning values from setters
+    no-sparse-arrays disallow sparse arrays
+    no-template-curly-in-string disallow template literal placeholder syntax in regular strings
+    no-unexpected-multiline disallow confusing multiline expressions
+    no-unreachable disallow unreachable code after `return`, `throw`, `continue`, and `break` statements
+    no-unsafe-finally disallow control flow statements in `finally` blocks
+    no-unsafe-negation disallow negating the left operand of relational operators
+    require-atomic-updates disallow assignments that can lead to race conditions due to usage of `await` or `yield`
+    use-isnan require calls to `isNaN()` when checking for `NaN`
+    valid-typeof enforce comparing `typeof` expressions against valid strings
+  comma-dangle:
+    - error
+    - always-multiline
+  no-cond-assign: error
+  no-constant-condition: error
+  no-dupe-args: error
+  no-dupe-keys: error
+  no-duplicate-case: error
+  no-empty: error
+  no-extra-boolean-cast: error
+  no-extra-semi: error
+  no-func-assign: error
+  no-inner-declarations: error
+  no-invalid-regexp: error
+  no-irregular-whitespace: error
+  no-negated-in-lhs: error
+  no-obj-calls: error
+  no-sparse-arrays: error
+  use-isnan: error
+  valid-typeof: error
+  no-unexpected-multiline: error
+  no-unreachable: error
+  moka/promise-return: error
+
+  # [Best Practices](https://eslint.org/docs/rules/#best-practices)
+  no-lone-blocks: error
+  no-multi-spaces: error
+  no-native-reassign: error
+  no-new: error
+  no-redeclare: error
+  no-self-compare: error
+  no-sequences: error
+  no-unused-expressions: error
+  no-with: error
+  wrap-iife: error
+  dot-notation:
+    - error
+    - allowKeywords: true
+  no-eval: error
+  no-alert: error
+  eqeqeq:
+    - error
+    - allow-null
+  curly:
+    - error
+    - all
+
+  # [Strict Mode](https://eslint.org/docs/rules/#strict-mode)
+
+  # [Variables](https://eslint.org/docs/rules/#variables)
+
+  # [Node.js and CommonJS](https://eslint.org/docs/rules/#node-js-and-commonjs)
+
+  # [Stylistic Issues](https://eslint.org/docs/rules/#stylistic-issues)
+
+  # [ECMAScript 6](https://eslint.org/docs/rules/#ecmascript-6)
+
+  no-shadow-restricted-names: error
+  no-shadow: error
+  no-undef-init: error
+  no-undef: error
+  no-undefined: error
+  no-unused-vars: error
+  no-use-before-define: error
+
+  # Stylistic issues
+  array-bracket-spacing:
+    - error
+    - never
+  # block-spacing:
+  #  - error
+  #  - always
+  brace-style:
+    - error
+    - 1tbs
+    - allowSingleLine: true
+  # camelcase:
+  #   - warn
+  #   - properties: never
+  comma-spacing:
+    - error
+    - before: false
+      after: true
+  comma-style:
+    - error
+    - last
+  computed-property-spacing:
+    - error
+    - never
+  eol-last: error
+  # func-style:
+  #  - error
+  #  - declaration
+  # indent:
+  #   - warn
+  #   - 2
+  #   - MemberExpression: 0
+  #     flatTernaryExpressions: true
+  #     ignoredNodes:
+  #       - ConditionalExpression
+  key-spacing:
+    - error
+    - beforeColon: false
+      afterColon: true
+  # linebreak-style:
+  #   - error
+  #   - unix
+  new-cap:
+    - error
+    - capIsNew: false
+  new-parens: error
+  no-mixed-spaces-and-tabs: error
+  no-new-object: error
+  no-spaced-func: error
+  no-trailing-spaces: error
+  no-unneeded-ternary: error
+  object-curly-spacing:
+    - error
+    - always
+  one-var:
+    - error
+    - never
+  operator-assignment:
+    - warn
+    - always
+  operator-linebreak:
+    - error
+    - before
+  # padded-blocks:
+  #   - warn
+  #   - never
+  quotes:
+    - warn
+    - single
+  quote-props:
+    - error
+    - as-needed
+    - keywords: true
+  semi: error
+  semi-spacing:
+    - error
+    - before: false
+      after: true
+  space-before-blocks:
+    - error
+    - always
+  keyword-spacing: error
+  space-before-function-paren:
+    - error
+    - never
+  space-in-parens:
+    - error
+    - never
+  space-infix-ops: error
+  space-unary-ops: error
+
+  # [ES6]
+  arrow-parens:
+    - error
+    - always
+  arrow-spacing:
+    - error
+    - before: true
+      after: true
+  constructor-super: error
+  no-class-assign: error
+  no-const-assign: error
+  no-dupe-class-members: error
+  no-this-before-super: error
+  no-var: error
+  # object-shorthand: error
+  # prefer-arrow-callback: error
+  # prefer-const: error
+  prefer-spread: error
+  # prefer-template: error
+  unicorn/no-abusive-eslint-disable: error
+
+  # [React]
+  react/jsx-no-duplicate-props: error
+  react/jsx-no-undef: error
+  jsx-quotes: error
+  react/jsx-uses-react: error
+  react/jsx-uses-vars: error
+  react/no-multi-comp: off
+  react/no-unknown-property: error
+  react/react-in-jsx-scope: error
+  # react/self-closing-comp: error
+  # react/jsx-wrap-multilines:
+  #   - warn
+  #   - declaration: parens-new-line
+  #     assignment: parens-new-line
+  #     return: parens-new-line
+  #     arrow: parens-new-line
+  #     condition: parens-new-line
+  #     logical: parens-new-line
+  #     prop: parens-new-line
+  react/jsx-closing-bracket-location: error
+  # react/jsx-no-bind: error
+  react/no-deprecated: error
+  # react/prop-types:
+  #   - warn
+  #   - ignore:
+  #     - children
+  #     - location
+  #     - router
+  #     - history
+  #     - params
+  #     - i18n
+  react/no-unused-prop-types: error
+  # react/no-unused-state: error
+  react/no-string-refs: error
+  # react/jsx-tag-spacing:
+  #   - warn
+  #   - closingSlash: never
+  #     beforeSelfClosing: never
+  #     afterOpening: never
+  react/jsx-pascal-case: error
+
+  # [mocha]
+  mocha-no-only/mocha-no-only: error
+  # [import/export]
+  # 下面这些规则等后端代码重构结束后再加上
+  # import/no-unresolved:
+  #   - error
+  #   - commonjs: true
+  # import/named: error
+  # import/default: error
+  # import/namespace: error
+  # 下面这个规则最好是将代码调整为 client、common、server的结构后再启用，不然规则太复杂
+  # import/no-restricted-paths:
+  #   - error
+  #   - zones:
+  #     target: ./src/main-app
+  #     from: ./src/server
+  # 下面这个规则比较激进，可以考虑有时间了偷摸merge
+  # import/group-exports: error
