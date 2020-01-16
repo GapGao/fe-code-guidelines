@@ -24,16 +24,16 @@ rules:
     no-constant-condition: error # disallow constant expressions in conditions
     no-control-regex: error # disallow control characters in regular expressions
     no-debugger: error # disallow the use of `debugger`
-    no-dupe-args disallow duplicate arguments in `function` definitions
-    no-dupe-else-if disallow duplicate conditions in if-else-if chains
-    no-dupe-keys disallow duplicate keys in object literals
-    no-duplicate-case disallow duplicate case labels
-    no-empty disallow empty block statements
-    no-empty-character-class disallow empty character classes in regular expressions
-    no-ex-assign disallow reassigning exceptions in `catch` clauses
-    no-extra-boolean-cast disallow unnecessary boolean casts
-    no-extra-parens disallow unnecessary parentheses
-    no-extra-semi disallow unnecessary semicolons
+    no-dupe-args: error # disallow duplicate arguments in `function` definitions
+    no-dupe-else-if: error # disallow duplicate conditions in if-else-if chains
+    no-dupe-keys: error # disallow duplicate keys in object literals
+    no-duplicate-case: error # disallow duplicate case labels
+    no-empty: error # disallow empty block statements
+    no-empty-character-class: error # disallow empty character classes in regular expressions
+    no-ex-assign: error # disallow reassigning exceptions in `catch` clauses
+    no-extra-boolean-cast: error # disallow unnecessary boolean casts
+    no-extra-parens: off # disallow unnecessary parentheses
+    no-extra-semi: error # disallow unnecessary semicolons
     no-func-assign disallow reassigning `function` declarations
     no-import-assign disallow assigning to imported bindings
     no-inner-declarations disallow variable or `function` declarations in nested blocks
