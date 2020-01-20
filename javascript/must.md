@@ -4,6 +4,8 @@
 
 ## 文件以\n结尾
 
+## 一个文件的行数不得超过1千行（除constant）
+
 ## 使用ES6 Modules规范而不是其他规范
 
 ES6 Modules见[文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/import)
@@ -49,6 +51,8 @@ JSDoc见[文档](https://jsdoc.app/)
 ## 禁止使用与系统API相同或是相像的名字
 
 ## 名字的字面含义必须与实际相符
+
+## 禁止使用一个字母作为名字的变量（有特例）
 
 # 格式
 
