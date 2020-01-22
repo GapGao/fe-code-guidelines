@@ -159,7 +159,9 @@ if (condition) {
 比如下面的一个if判断：
 
 ```js
-if (!isOldType || message.id || message.code) {
-
+if (role < ROLES.HR) {
+  return false;
+} else if (permissions.has(ACTIONS.COMMENT)) {
+  return false;
 }
 ```
