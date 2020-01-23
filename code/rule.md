@@ -155,6 +155,8 @@ const a = 1,
 
 ## 禁止UGC业务使用dangerouslyInnerHTML
 
+## 禁止index做key
+
 ## 禁止不必要的jsx嵌套
 
 ## redux action必须遵守FSA标准
