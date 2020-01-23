@@ -91,11 +91,89 @@ export default { xxxHelper, ACTIONS };
 
 ## 注释符合JSDoc规范，尤其是函数和类型的注释
 
-JSDoc见[文档](https://jsdoc.app/)
+Javascript是动态类型语言，编辑器很难推导出代码中的类型信息，最简单的解决办法就是通过注释来补充说明。
+
+[JSDoc](https://jsdoc.app/)本身是一个能根据代码注释自动生成文档的工具，其规定的注释风格能够被大部分主流IDE识别，因此我们的注释也应该符合JSDoc规范。
+
+比如在VSCode中，没有当鼠标hover在一个没有注释的函数时，给出的函数信息非常少（如下图中红框区域）：
+
+![](../assets/no_comment.png)
+
+函数的第三个参数`role`是个什么东西呢？完全看不出来。
+
+如果按照JSDoc格式补充了注释，就可以看到非常丰富的信息了（尤其是其中的类型信息）：
+
+![](../assets/has_comment.png)
+
+这下我们知道了，role是一个number，而不是string或object类型。
+
+JSDoc规定了非常详细的注释语法，其实大部分语法都用不到，我们只要求在两个场景下的注释符合JSDoc规范。
+
+1. 函数注释。尤其是有代码复用目的的函数，必须有注释。
+2. 类型注释。尤其是接口请求数据和返回数据，必须有注释。
+
+这是函数注释的例子：
+
+```js
+/**
+ * 新建user
+ * @param {string} name - 用户姓名
+ * @param {string} email - 用户邮箱
+ * @param {number} role - 角色
+ * @return {Promise<boolean>} 是否创建成功
+ */
+async function createUser(name, email, role) {
+  return true;
+}
+```
+
+这是类型注释的例子：
+
+```js
+/**
+ * 用户信息
+ * @typedef {object} UserInfo
+ * @property {string} name
+ * @property {string} email
+ * @property {number} role
+ */
+
+/**
+ * @type {UserInfo}
+ */
+const user = { ... };
+```
+
+需要注意，Javascript的primitive type是小写单词，例如`boolean`,`number`,`string`,`symbol`,`null`。除此以外的类型是首字母大写单词，例如`Array`,`Promise`。具体的规则参考Google Closure Compiler文档中的[类型部分](https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System#the-javascript-type-language)
+
 
 ## //必须接一个空格
 
+这也是一个非常琐碎的细节，为了保持代码统一，这里明确一下。带有空格显得代码没有那么拥挤，相对稍微有利于阅读一些。
+
+```js
+// good
+// 前面有一个空格
+
+// bad
+//前面没有空格
+```
+
 ## disable eslint规则的地方都必须添加注释
+
+如果disable eslint，那想必是有什么迫不得已的原因，如果没有说明为什么，未来其他人维护代码的时候就会非常困难，重构的时候都是坑。
+
+```js
+// good
+// 这里禁用了camelCase的eslint检查，因为access_token之后会参与sql拼接，必须是snake_case
+let access_token = ''; // eslint-disable-line camel-case
+
+// bad
+let access_token = ''; // eslint-disable-line camel-case
+
+// even worse
+let access_token = ''; // eslint-disable-line
+```
 
 # [命名]
 
