@@ -5,7 +5,7 @@
 
 这些规范除极少数特殊情况外都必须被严格遵守。
 
-# 目录和文件
+# [目录和文件]
 
 ## 使用UTF-8字符编码，换行符为\n
 
@@ -13,15 +13,17 @@
 
 ## 一个文件的行数不得超过1千行（除constant）
 
-## 使用ES6 Modules规范而不是其他规范
+## 使用ES6 Modules而不是CommonJS
 
 ES6 Modules见[文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/import)
+
+## import顺序必须按照第三方依赖、本地依赖、非js依赖的顺序排列
 
 ## 一个React组件一个文件
 
 ## React组件使用default export，其他情况使用named export
 
-# 注释
+# [注释]
 
 ## 注释符合JSDoc规范，尤其是函数和类型的注释
 
@@ -31,13 +33,13 @@ JSDoc见[文档](https://jsdoc.app/)
 
 ## disable eslint规则的地方都必须添加注释
 
-# 命名
+# [命名]
 
 ## 常量名大写，以`_`做分隔符
 
 ## 函数名、变量名遵从小驼峰（lowerCamelCase）
 
-## 类名遵从大驼峰（UpperCamelCase）
+## 类名、组件名遵从大驼峰（UpperCamelCase）
 
 ## 路由名遵从蛇型（snake_case）
 
@@ -63,7 +65,7 @@ JSDoc见[文档](https://jsdoc.app/)
 
 ## 禁止使用一个字母作为名字的变量（有特例）
 
-# 格式
+# [格式]
 
 ## 必须使用分号
 
@@ -103,13 +105,13 @@ const a = 1,
 
 ## callback是最后一个参数
 
-# 语法、特性
+# [语法、特性]
 
 ## 使用===，禁止使用==
 
 ## 使用const和let，禁止使用var
 
-## 优先使用arrow function，尤其是class method
+## 优先使用arrow function，尤其是class property
 
 ## 禁止使用eval和Function(...string)
 
@@ -140,3 +142,37 @@ const a = 1,
 ## 禁止擅自引入新的stage-x特性（必须与leader沟通讨论）
 
 ## 禁止擅自引入npm包（必须与leader沟通讨论）
+
+# [React]
+
+## 组件必须写propTypes
+
+## 组件的propTypes必须按照样式、配置、数据、动作的顺序排列
+
+## 禁止在render函数中产生副作用
+
+## 禁止使用spread操作符给组件传参
+
+## 禁止UGC业务使用dangerouslyInnerHTML
+
+## 禁止不必要的jsx嵌套
+
+## redux action必须遵守FSA标准
+
+[FSA(Flux Standard Action)标准](https://github.com/acdlite/flux-standard-action)
+
+# [样式]
+
+## 样式属性必须按照定位、盒模型、文字、其他的顺序排列
+
+## 必须使用CSS Modules
+
+## 禁止使用tag做选择器
+
+## 禁止使用!important
+
+## 禁止不必要的选择器嵌套
+
+## 禁止使用stylus的&拼接选择器
+
+## 禁止使用float做定位

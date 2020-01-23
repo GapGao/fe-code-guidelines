@@ -270,22 +270,3 @@ rules:
   #     beforeSelfClosing: never
   #     afterOpening: never
   react/jsx-pascal-case: error
-
-  # [mocha]
-  mocha-no-only/mocha-no-only: error
-  # [import/export]
-  # 下面这些规则等后端代码重构结束后再加上
-  # import/no-unresolved:
-  #   - error
-  #   - commonjs: true
-  # import/named: error
-  # import/default: error
-  # import/namespace: error
-  # 下面这个规则最好是将代码调整为 client、common、server的结构后再启用，不然规则太复杂
-  # import/no-restricted-paths:
-  #   - error
-  #   - zones:
-  #     target: ./src/main-app
-  #     from: ./src/server
-  # 下面这个规则比较激进，可以考虑有时间了偷摸merge
-  # import/group-exports: error
