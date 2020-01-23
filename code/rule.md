@@ -40,7 +40,20 @@ abcdefgh
 
 ES6 Modules见[文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/import)
 
-ES6的模块系统是纯静态的模块系统，可以在编译阶段就完全确定模块依赖情况从而发现和排除很多问题，CommonJS是动态的模块系统
+ES6的模块系统是纯静态的模块系统，可以在编译阶段就完全确定模块依赖情况从而发现和排除很多问题，CommonJS是动态的模块系统，在编译阶段是无法完全确定代码的模块依赖情况的，比如CommonJS允许这样的写法：
+
+```js
+// require的包是动态决定的
+const filePath = '../components/Dialog';
+const Dialog = require(filePath);
+
+// require行为是动态决定的
+if (condition) {
+  require('some-module')();
+}
+```
+
+上面两种写法，只有在运行时才可以确定，ES6 Modules规范都是不允许的。
 
 ```js
 // good
