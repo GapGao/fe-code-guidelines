@@ -9,7 +9,7 @@ Front-end Code Guideline
 
 其实不仅仅是写代码，很多地方都可以应用这个原则，比如对难以理解的逻辑添加注释，比如Merge Request写清楚本次改动的内容，比如编写单元测试等等。通常这些也是一个工程师的职业素养的体现，资深工程师的代码和应届毕业生的代码差距通常就在这里。
 
-这个仓库主要整理了一些前端开发的经验和规范，按照抽象层级从低到高分为：**Rule（规则）**、**Suggestion（建议）**和**Philosophy（哲学）**，范围包括Javascript、CSS、React。
+这个仓库主要整理了一些前端开发的经验和规范，按照抽象层级从低到高分为：**[Rule（规则）](/code/rule.md)**、**[Suggestion（建议）](/code/suggestion.md)** 和 **[Philosophy（哲学）](/code/philosophy.md)**，范围包括Javascript、CSS、React。
 
 
 
