@@ -29,7 +29,7 @@ ES6 Modules见[文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/R
 
 JSDoc见[文档](https://jsdoc.app/)
 
-## 注释后必须有一个空格
+## //必须接一个空格
 
 ## disable eslint规则的地方都必须添加注释
 
