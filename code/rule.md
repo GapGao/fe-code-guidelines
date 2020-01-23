@@ -96,10 +96,10 @@ JSDoc见[文档](https://jsdoc.app/)
 ## 禁止垂直对齐
 
 例如：
+```js
 const a = 1,
       b = 2;
-
-## import时，首先是third-party dependency，然后是local file，最后是非js依赖
+```
 
 ## callback的第一个参数是error
 
