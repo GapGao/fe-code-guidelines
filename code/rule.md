@@ -9,19 +9,83 @@
 
 ## 使用UTF-8字符编码，换行符为\n
 
-## 文件以\n结尾
+基本上是共识了，没什么好说的
+
+## 文件以换行符（\n）结尾
+
+文件以换行符结尾的好处是做文件内容拼接的时候容易区分不同的文件
+
+```
+// 文件1的内容：
+abcd
+
+// 文件2的内容：
+efgh
+
+// 如果文件以换行结尾，则两个文件拼接后的内容是：
+abcd
+efgh
+
+// 如果文件不以换行结尾，则两个文件拼接后的内容是：
+abcdefgh
+```
+
+这其实是一个非常细节的地方，不过为了统一这里还是规定一下
 
 ## 一个文件的行数不得超过1千行（除constant）
+
+代码行数可以大致反映复杂程度，这个规则主要是避免写出大泥球式的巨型组件、模块，因为他们很难维护
 
 ## 使用ES6 Modules而不是CommonJS
 
 ES6 Modules见[文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/import)
 
-## import顺序必须按照第三方依赖、本地依赖、非js依赖的顺序排列
+ES6的模块系统是纯静态的模块系统，可以在编译阶段就完全确定模块依赖情况从而发现和排除很多问题，CommonJS是动态的模块系统
+
+```js
+// good
+import a from 'some/module';
+
+// bad
+const a = require('some/module');
+```
+
+## import顺序必须按照第三方依赖、本地依赖、非js依赖的顺序排列，相同类型下常见的放前面不常见的放后面
+
+这个规则主要是为了提示代码的美观程度，就好比写字，字写得好看和难看通常没有功能上的区别，但是有美学上的区别。
+
+```js
+// 先引入第三方依赖
+import React from 'react';
+import lodash from 'lodash';
+// 然后引入本地依赖
+import AComponent from './components/MyComponent';
+import AnotherComponent from './components/AnotherComponent';
+// 最后引入非js依赖
+import styles from './styles.css';
+```
 
 ## 一个React组件一个文件
 
+这个规则的目的同样是为了避免写出大泥球式的代码，一个文件里的React组件越多，通常逻辑越复杂，越难以维护
+
 ## React组件使用default export，其他情况使用named export
+
+因为React组件通常一个组件一个文件，所以用default export写起来比较符合直觉，其他情况下，比如util或constant应该用named export保证名字稳定
+
+```js
+// good
+// React组件使用default export
+export default MyComponent;
+// constant和utils使用named export
+export { xxxHelper, ACTIONS };
+
+// bad
+// React组件使用了named export
+export { MyComponent };
+// constant和utils使用了default export
+export default { xxxHelper, ACTIONS };
+```
 
 # [注释]
 
