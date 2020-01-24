@@ -208,11 +208,101 @@ const USERTYPE = 3; // 没有_分隔，不好理解
 
 ## 函数名、变量名遵从小驼峰（lowerCamelCase）
 
+小驼峰的意思是首字母小写的驼峰
+
+很基础的规则，没有太多可说的
+
+```js
+// good
+const userInfo = ...;
+function updateUser() {
+  ...
+}
+
+// bad
+const user_info = ...;
+function update_user() {
+  ...
+}
+```
+
 ## 类名、组件名遵从大驼峰（UpperCamelCase）
+
+大驼峰的意思是首字母大写的驼峰
+
+很基础的规则，没有太多可说的
+
+```js
+// good
+class UserSelector {
+  ...
+}
+
+function UserSelector(props) {
+  ...
+}
+
+// bad
+class userSelector {
+  ...
+}
+
+function userSelector {
+  ...
+}
+```
 
 ## 路由名遵从蛇型（snake_case）
 
+url是不区分大小写的，camelCase是依赖大小写存储信息的，因此用camelCase不太合适。
+
+连字符`-`和下划线`_`二者其实没有太大差别，你看他们在键盘上甚至是共享一个按键的。
+
+目前已知的一些区别有：
+
+1. 文本分隔的效果。hyphen-example是无法双击选中整行的，lodash_example可以。
+
+比如你可以尝试分别用鼠标双击下面的两个例子：
+
+```
+hyphen-example
+lodash_example
+```
+
+一种说法是，`-`能让搜索引擎爬虫更好地分隔url，为页面打上标签，有利于SEO，不过我本人对这个说法持怀疑态度，搜索引擎应该不至于傻到这种程度。
+
+2. 是否构成单词。比如`-`会参与某些单词的组成，比如front-end，但是`_`不会。因此如果用`-`的话，面对本身带`-`的单词可能会有麻烦。
+
+比如shield.io就使用`-`做url编码的分隔符，格式为`{label}-{message}-{color}`，比如这样一个徽章：
+
+![](https://img.shields.io/badge/fe--code--guideline-v0.0.1-brightgreen)
+
+因为徽章里的文本已经有`-`了，shields.io的解决办法是用两个`-`表示一个出现在单词中的`-`，略有些不便。
+
+> 其实这里如果换成`_`做分隔符也会遇到同样的问题，这里只是举一个例子
+
+3. 输入体验。`-`比`_`在输入的时候会略微容易一些，不需要按住shift，恰好`_`的按键和shift按键隔得比较远，很难单手操作。这对某些追求极致手速的开发者来说会带来不爽。
+
+综上，在没有太多差别的情况下，我们就选择了`_`作为一个统一的标准，对，只是一个约定的标准，不要再问了，just do it
+
 ## default export class的文件名与class名保持一致，其他文件名遵从小驼峰
+
+React组件因为是一个组件一个文件，所以有必要让组件名与文件名保持一致，这样更有利于理解和检索代码，比如：
+
+```sh
+# good
+.
+├── UserSelector.jsx
+└── LocationPanel.jsx
+```
+
+对于非组件类型的其他文件，文件名命名规范与变量、函数一样，采用小驼峰。这个规则主要是为了减少大家的选择负担，与代码的默认命名方式保持一致。
+
+```sh
+.
+├── utils.js
+└── dateFormatter.js
+```
 
 ## 路由相关目录与路由名保持一致，其他目录名遵从小驼峰
 
