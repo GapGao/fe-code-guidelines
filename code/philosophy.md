@@ -105,50 +105,7 @@ function doSomething2AfterSomething1() {
 
 从某种程度上说，“显式”和“隐式”可以类比与“简单”与“简洁”。
 
-# 3. “单一”优于“多样”
-
-在现实中，“多样”总是优于“单一”。比如多样化饮食比单一结构饮食更有利于健康，比如多元的文化比单一文化更有利于文明进步，等等。
-但是在代码世界中，“单一”比“多样”更合适，我们是在写代码不是在写诗。
-
-代码风格要保持统一。对于没有明显好坏之分的写法风格分歧，应该毫不犹豫地选择遵从“传统”，少数服从多数。比如js是否加分号，真的没有什么区别，只是一种风格而已，但是如果大部分代码已经加了分号，那你就应该加分号。
-
-除了代码风格之外，类型也应该保持一致。比如：
-
-```js
-// 函数返回类型不统一
-function foo() {
-  if (condition) {
-    return 1;
-  } else {
-    return '2';
-  }
-}
-
-// 变量类型不统一
-let result = 1;
-if (condition) {
-  result = '2';
-}
-```
-
-代码中唯一允许并且被鼓励的多样性是注释，请把你的个性表达在注释里吧。
-
-```js
-// 《UNESCO世界非物质文化遗产》
-// 《全国重点文物保护单位》
-// 《全国AAAAA级旅游景区》
-//              —————— CEO赵欧伦同学在mage项目最后的几行代码
-// 本文件需要施工请绕过下面几行
-
-// 打卡围观群众
-//    Xinkai Chen
-//    Eden_cola
-//    Lishunyang
-//    Baishi Liu
-//    Scorpiour
-```
-
-# 4. “组合”优于“继承”
+# 3. “组合”优于“继承”
 
 组合和继承是代码复用的两种方式。
 
@@ -208,3 +165,172 @@ request.post();
 所以，在保持一致的哲学之下，应该多用组合而不是继承，这也更符合前端开发的思考方式。
 
 哦对了，在灵活性上看，组合比继承更加有优势，看，你又多了一个使用组合的理由。
+
+# 4. “单一”优于“多样”
+
+在现实中，“多样”总是优于“单一”。比如多样化饮食比单一结构饮食更有利于健康，比如多元的文化比单一文化更有利于文明进步，等等。
+但是在代码世界中，“单一”比“多样”更合适，我们是在写代码不是在写诗。
+
+代码风格要保持统一。对于没有明显好坏之分的写法风格分歧，应该毫不犹豫地选择遵从“传统”，少数服从多数。比如js是否加分号，真的没有什么区别，只是一种风格而已，但是如果大部分代码已经加了分号，那你就应该加分号。
+
+除了代码风格之外，类型也应该保持一致。比如：
+
+```js
+// 函数返回类型不统一
+function foo() {
+  if (condition) {
+    return 1;
+  } else {
+    return '2';
+  }
+}
+
+// 变量类型不统一
+let result = 1;
+if (condition) {
+  result = '2';
+}
+```
+
+代码中唯一允许并且被鼓励的多样性是注释，请把你的个性表达在注释里吧。
+
+```js
+// 《UNESCO世界非物质文化遗产》
+// 《全国重点文物保护单位》
+// 《全国AAAAA级旅游景区》
+//              —————— CEO赵欧伦同学在mage项目最后的几行代码
+// 本文件需要施工请绕过下面几行
+
+// 打卡围观群众
+//    Xinkai Chen
+//    Eden_cola
+//    Lishunyang
+//    Baishi Liu
+//    Scorpiour
+```
+
+# 5. “展示”与“逻辑”分离
+
+如果二者耦合在一起，其中一方变化另一方也必须要跟着变化，改动和维护成本被人为增加了。
+
+道理大家都懂，但说起来容易做起来难，如何识别展示与逻辑，以及如何设计出展示与逻辑分离的代码需要踩坑与积累。
+
+举一个例子，现在我们手上有中国城市的数据，需要实现一个很原始的列表形式的选择组件，比如：
+
+```jsx
+const cityNames = ['北京', '上海', '广州', '深圳', ...];
+
+<CitySelector options={} value={} onChange={}/>
+```
+
+可能会有两种方案：
+
+方案1
+```jsx
+/**
+ * @param {object} options
+ * @param {string[]} options.cities - 城市列表
+ * @param {string} options.value - 当前所选城市
+ * @param {Function} options.onChange - onChange回调
+ */
+function CitySelector({ cities, value, onChange }) {
+  return (
+    <ul>
+      {cities.map((city) => (
+        <li
+          className={value === city ? 'active' : ''}
+          onClick={() => onChange(city)}
+        >
+          {city}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// 调用方法
+<CitySelector
+  cities={['北京', '上海', '广州', '深圳', ...]}
+  value={'上海'}
+  onChange={(city) => updateCityAPI(city)}
+/>
+```
+
+方案2
+```jsx
+/**
+ * @param {object} options
+ * @param {{ id: number, name: string }[]} options.cities - 城市列表
+ * @param {number} options.value - 当前所选城市id
+ * @param {Function} options.onChange - onChange回调
+ */
+function CitySelector({ cities, value, onChange }) {
+  return (
+    <ul>
+      {cities.map((city) => (
+        <li
+          className={value === city.id ? 'active' : ''}
+          onClick={() => onChange(city)}
+        >
+          {city.name}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// 调用方法
+<CitySelector
+  cities={[{ id: 1, name: '北京' }, { id: 2, name: '上海'} , { id: 3, name: '广州' }, { id:4, name: '深圳' }, ...]}
+  value={2}
+  onChange={(city) => updateCityAPI(city)}
+/>
+```
+
+这两种方案唯一的不同是方案1中城市的名字同时作为了被展示的内容与保存的数据，而方案2中城市的展示内容是name，保存的数据是id。
+
+因为数据是属于业务逻辑的部分，因此显然方案1耦合了展示与逻辑，方案2分开了。
+
+类似的还有很多例子，比如我们在url中保存筛选条件：
+
+```
+方案1
+https://app.mokahr.com/?city=北京&degree=高中&commitment=全职
+
+方案2
+https://app.mokahr.com/?city=1&degree=3&commitment=2
+```
+
+比如后端接口返回的状态：
+
+```js
+// 方案1，直接保存一段文本
+const API_STATUS = [
+  '请求成功',
+  '权限不足',
+  '数据不存在',
+  '未知错误',
+  ...
+];
+
+// 方案2，保存的是code
+const API_STATUS = [
+  1,
+  2,
+  3,
+  4,
+  ...
+]
+```
+
+比如定时发消息业务的后端逻辑设计：
+
+```
+方案1，直接把待发送的信息拼接好存在库里，发送的时候无脑取出来发送即可。
+
+方案2，将待发送的信息元数据存下来，发送的时候将元数据重新还原拼接成完整内容再发送。
+```
+
+类似的例子还有很多，通过分析我们发现，要遵守展示与逻辑分离是有代价的，通常是导致开发成本更高了。因此，即使人们都明白这个道理，也仍然会不自觉地写出展示与逻辑耦合的代码，尤其是那些刚从学校毕业、缺乏大型项目开发经验、对Java嗤之以鼻的人。
+
+如何避免这个问题呢？这里有一个小技巧，就是在设计枚举类型数据的时候，将枚举类型的值设计成非本地语言环境的。比如在中文语言环境下，将枚举类型的值设计成英文的，这样就逼迫开发者在实现展示逻辑的时候不得不做一次转换，从英文转换成中文，从而避免直接耦合的情况发生。
