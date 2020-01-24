@@ -192,7 +192,19 @@ let access_token = ''; // eslint-disable-line
 
 # [命名]
 
-## 常量名大写，以`_`做分隔符
+## 常量名全大写，单词之间以`_`做分隔符
+
+很基础的规则，没有太多可说的
+
+```js
+// good
+const ROLE_HR = 'hr';
+const USER_TYPE = 3;
+
+// bad
+const roleHr = 'hr'; // 没有用全大写
+const USERTYPE = 3; // 没有_分隔，不好理解
+```
 
 ## 函数名、变量名遵从小驼峰（lowerCamelCase）
 
