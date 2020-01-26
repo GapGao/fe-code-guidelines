@@ -294,27 +294,163 @@ React组件因为是一个组件一个文件，所以有必要让组件名与文
 .
 ├── UserSelector.jsx
 └── LocationPanel.jsx
+
+# bad
+.
+├── user-selector.jsx
+└── location_panel.jsx
 ```
 
 对于非组件类型的其他文件，文件名命名规范与变量、函数一样，采用小驼峰。这个规则主要是为了减少大家的选择负担，与代码的默认命名方式保持一致。
 
 ```sh
+# good
 .
 ├── utils.js
 └── dateFormatter.js
+
+# bad
+.
+├── Utils.js
+└── date_formatter.js
 ```
 
-## 路由相关目录与路由名保持一致，其他目录名遵从小驼峰
+## 路由目录与路由名保持一致，组件目录名与组件名保持一致（大驼峰），其他目录名遵从小驼峰
 
-## 名词统一用单数（除非特别强调复数含义的）
+目录的命名规范请参考“代码目录结构规范”，这里不做过多解释，遵守就是了。
 
-## 动词统一用现在时（除非特别强调其他时态的）
+假设项目的路由是 /user_info和/interview_setting
+```sh
+# good
+.
+└── pages/ # pages下目录名与路由保持一致
+    ├── user_info/
+    │   └── ...
+    └── interview_setting/
+        └── ...
 
-## 禁止全大写缩写单词
+# bad
+.
+└── pages/ # pages下目录名与路由没有保持一致
+    ├── userInfo/
+    │   └── ...
+    └── interviewSetting/
+        └── ...
+```
 
-## 表示私有变量或临时变量以`_`（一个下划线）开头
+```sh
+# good
+.
+└── InterviewTable/ # 组件目录名与组件名保持一致（遵从大驼峰）
+    ├── TableHeader.js
+    ├── TableBody.js
+    └── index.js
+
+# bad
+.
+└── interviewTable/ # 组件目录名没有与组件名保持一致（遵从大驼峰）
+    ├── TableHeader.js
+    ├── TableBody.js
+    └── index.js
+```
+
+```sh
+# good
+.
+└── xhrTool/ # 其他目录名遵从小驼峰
+    └── ...
+
+# bad
+.
+└── xhr_tool/ # 其他目录名没有遵从小驼峰
+    └── ...
+```
+
+## 目录名称都用单数（除非特别强调复数含义的）
+
+英文名词复数可能有特殊形式，甚至有些名词是不可数的，这比较考验开发者的英文水平，但我们是在写代码不是在写英语作文，所以在没有特别强调复数含义的时候，都统一用单数，轻松加愉快。
+
+与编程语言类似，自然语言也有糟粕，比如名词单复数变化规则不统一就是一种。
+
+```sh
+# good
+.
+├── constant/ # 目录名是单数
+│   └── ...
+└── util/
+    └── ...
+
+# bad
+.
+├── constants/ # 目录名不是单数
+│   └── ...
+└── utils/
+    └── ...
+```
+
+## 动词统一用现在时（除非特别强调其他时态含义的）
+
+英文动词时态千变万化，而且不同时态的写法也不一样，同样地，我们是在开发，不是在写英文作文，所以统一使用一般时态即可。
+
+动词时态不规则变化同样也是语言的糟粕。
+
+```js
+// good
+const updateAt = Date.now();
+const changed = Date.now();
+
+// bad
+const updatedAt = Date.now();
+const hasChanged = Date.now();
+```
+
+## 采用驼峰命名规则时禁止全大写某个单词
+
+在驼峰规则里大小写是作为单词的分割的标记。例如：
+
+```js
+const userId = 1; // user + id
+const sendHttpStatus = 0; // send + http + status
+```
+
+因此我们可以利用这个规则从驼峰式转换到其他形式：
+
+```
+userId <=> user_id
+sendHttpStatus <=> send_http_status
+```
+
+如果其中有单词大写了，就会打破这个规则，转换的结果变为：
+
+```
+sendHTTPStatus <=> send_h_t_t_p_status
+```
+
+因此：
+
+```js
+// good
+const candidateId = 1;
+const htmlContent = '';
+
+// bad
+const candidateID = 1;
+const HTMLContent = '';
+```
 
 ## DOM节点的引用以`$`开头
+
+在使用React时，通常是不需要直接操作DOM元素的，如果代码非常依赖对DOM操作，大概率是代码写的不够“React”，其他人理解代码的成本就会上升（不能再按照React的生命周期思考和理解代码逻辑）。
+
+所以，这里规定对DOM元素的引用的名字前面都加一个`$`，目的是使代码逻辑更加明显，提醒维护者这段代码逻辑涉及DOM操作。
+
+```js
+// good
+const $name = document.getElementById('name');
+
+// bad
+const name = document.getElementById('name');
+```
 
 ## 禁止用2表示“to”、4表示“for”
 
