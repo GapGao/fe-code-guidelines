@@ -454,27 +454,273 @@ const name = document.getElementById('name');
 
 ## 禁止用2表示“to”、4表示“for”
 
+2和4如果用来表示"to"和"for"，唯一的意义是少写几个字母，可是真的要表示"2"和"4"的含义的时候怎么办呢？比如`http2Status`，是`httpToStatus`还是`http2Status`呢？
+
+```js
+// good
+const httpToStatus = {};
+function updateForHr() {
+  ...
+}
+
+// bad
+const http2Status = {};
+function update4Hr() {
+  ...
+}
+```
+
 ## 禁止使用与系统API相同或是相像的名字
+
+与系统API重名或者相似的命名，极易迷惑其他人，百害而无一利。所以这种做法非傻即坏。
+
+```js
+// good
+class MyRequest {
+  ...
+}
+
+// bad
+class Request { // Request是浏览器环境的Fetch接口
+  ...
+}
+```
 
 ## 名字的字面含义必须与实际相符
 
+例如：
+```js
+// 函数看着像是return什么东西但是没有return
+function getUserInfo() {
+  ... // 没有return任何东西
+}
+
+// 变量看着像是object其实是个array
+const user = [
+  ...
+]
+```
+
+我们称这种行为是“说一套做一套”，请不要这样，不然亲人会远离你，朋友会厌恶你。
+
 ## 禁止使用一个字母作为名字的变量（有特例）
+
+先说特例，特例是`i`、`j`、`k`作为循环变量。这是约定俗称的，大家已经达成了共识，这么写不会对大家理解代码有什么干扰，所以没问题。
+
+```js
+for (let i = 0; i < candidates.length; i++) {
+  ...
+}
+```
+
+其他情况禁止使用单一字母做变量的名字，因为代码可读性很差，尤其是当代码逻辑变多以后。
 
 # [格式]
 
 ## 必须使用分号
 
+没有什么特殊的理由，就是单纯的规则。
+
+```js
+// good
+const user = new User();
+
+// bad
+const user = new User()
+```
+
 ## 2个空格为一个缩进单位
 
-## switch的case会带来额外的一层缩进
+没有什么特殊的理由，就是单纯的规则，所有括号括起来的部分，都应该产生缩进
 
-## 括号遵从K&R风格（埃及风格）
+```js
+// good
+function foo() {
+  return 0;
+}
 
-## 控制语句（if、else、for、do、while）都必须有括号
+// bad
+function foo() {
+    return 0;
+}
+```
+
+这里需要注意几个地方：
+
+1. swtich的case也要缩进（因为有些eslint规则要求switch的case没有缩进，这种写法不符合这里的规则）
+
+```js
+// good
+switch (status) {
+  case 0:
+    ...
+  case 1:
+    ...
+  default:
+    ...
+}
+
+// bad
+switch (status) {
+case 0:
+  ...
+case 1:
+  ...
+default:
+  ...
+}
+```
+
+2. 一个语句如果要换行，需要添加缩进
+
+```js
+// good
+request('/api/demo')
+  .get();
+
+const status = (a && b)
+  || c;
+
+// bad
+request('/api/demo')
+.get();
+
+const status = (a && b)
+|| c;
+```
+
+## 括号默认遵从K&R风格（特殊情况除外）
+
+没有什么特殊的理由，就是单纯的规则。
+
+```js
+// good
+function foo() {
+  ...
+}
+
+if (condition) {
+  ...
+} else {
+  ...
+}
+
+// bad
+function foo()
+{
+  ...
+}
+
+if (condition)
+{
+  ...
+}
+else
+{
+  ...
+}
+```
+
+所谓的例外，通常是一些字面量的定义，因为此时如果仍然使用KR风格，可读性并不会很好，用MS风格也是可以的。
+
+```js
+// 如果全部使用传统的KR风格，这里的缩进让人感觉很奇怪
+const users = [{
+  id: 1,
+  name: 'a',
+}, { // <--
+  id: 2,
+  name: 'b',
+}];
+
+// 如果内部使用MS风格，这里的缩进看上去就自然多了
+const users = [
+  {
+    id: 1,
+    name: 'a',
+  },
+  {
+    id: 2,
+    name: 'b',
+  },
+];
+```
+
+## 控制语句（if、else、for、do、while）、运算符两侧都必须有括号
+
+没有什么特殊的理由，就是单纯的规则。这样做的好处是避免代码过于拥挤。
+
+```js
+// good
+if (status === 0) {
+  ...
+}
+
+// bad
+if(status===0){
+  ...
+}
+```
+
+## 括号里不需要空格
+
+没有什么特殊的理由，就是单纯的规则。
+
+```js
+// good
+const a = [1, 2, 3];
+if (condition) {
+  ...
+}
+
+// bad
+const a = [ 1, 2, 3 ];
+if ( condition ) {
+  ...
+}
+```
 
 ## 箭头函数即使只有一个参数也要有括号
 
+没有什么特殊的理由，就是单纯的规则。
+
+```js
+// good
+const foo = (arg) => {
+  console.log(arg);
+}
+
+// bad
+const foo = arg => {
+  console.log(arg);
+}
+```
+
 ## 用的时候再申明变量，而不是在一开始就申明
+
+这样做可以让代码更紧凑，相关的代码在一起。
+
+```js
+// good
+function foo() {
+  ...
+  const a = 1; // 下面要用到a了，此时申明变量
+  if (a) {
+    ...
+  }
+  ...
+}
+
+// bad
+function foo() {
+  const a = 1; // 函数一开头就申明了变量，到很后面才用到
+  ...
+  if (a) {
+    ...
+  }
+  ...
+}
+```
 
 ## 申明变量时必须设置初始值
 
