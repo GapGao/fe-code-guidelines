@@ -589,6 +589,39 @@ const status = (a && b)
 || c;
 ```
 
+## 禁止垂直对齐
+
+所谓的垂直对齐指的是这种风格：
+
+```js
+const a   = 1;
+const aa  = 2;
+const aaa = 3;
+```
+
+甚至也会出现在注释里：
+
+```js
+/**
+ * @param {number}     a - blablabla
+ * @param {boolean[]}  b - blablabla
+ */
+```
+
+看着确实美观，可读性好，但是容易产生额外的维护成本（比如某一项变量导致整体都要调整），有时候会产生额外的缩进，让一行变得更长，行内比较稀疏，反而不利于阅读了。所以不要使用垂直对齐的写法。
+
+```js
+// good
+const a = 1;
+const aa = 2;
+const aaa = 3;
+
+// bad
+const a   = 1;
+const aa  = 2;
+const aaa = 3;
+```
+
 ## 括号默认遵从K&R风格（特殊情况除外）
 
 没有什么特殊的理由，就是单纯的规则。
@@ -724,27 +757,108 @@ function foo() {
 
 ## 申明变量时必须设置初始值
 
-## 禁止一行申明多个变量
+申明变量赋初始值就像是东西用完了放回原处一样，绝对是个好习惯。能够减少出bug的可能性。
 
-## 禁止一行出现多个语句
+```js
+// good
+const user = null;
+const status = -1;
 
-## 一行代码不超过120个字符
+// bad
+const user;
+const status;
+```
+
+## 禁止一行出现多个语句或者一次申明多个变量
+
+js里，一个语句可以占多行，同样地，多个语句也可以占一行（以分号分隔）
+一行多个语句会降低代码可读性，添加注释也很困难，所以这种行为是被禁止的。变量申明也是如此。
+
+```js
+// good
+const name = '';
+const email = '';
+const phone = '';
+
+if (condition) {
+  ...
+} else {
+  ...
+}
+
+// bad
+const name = '', email = '', phone = '';
+
+if (condition) { ... } else { ... }
+```
+
+## 一行代码不超过160个字符
+
+一行的字符数太多会降低代码可读性，传统的80个字符的限制不是很合适，因为真的很容易超过，所以这里放宽到了160个字符。
+
+例子就不用举了。
 
 ## 禁止连续空行
 
-## 禁止行尾空格
+连续的空行会让代码变得稀疏，降低可读性。如果你具体的需要有多个空行区分不同的逻辑，那可以考虑重构成两个函数。
 
-## 禁止垂直对齐
-
-例如：
 ```js
-const a = 1,
-      b = 2;
+// good
+function foo() {
+  ...
+
+  ...
+}
+
+// bad
+function foo() {
+  ...
+
+
+  ...
+}
 ```
 
-## callback的第一个参数是error
+## 禁止行尾空格
 
-## callback是最后一个参数
+行尾空格通常都是多余的，多余的东西没有存在的价值，留着还会显得乱。
+
+建议配置IDE，在保存的时候自动清除行尾空格。
+
+## 自定义callback的第一个参数是error
+
+自定义回调函数的第一个参数是error，这是源自nodejs的写法约定。如果大家都遵从这个约定，有助于提升代码的可读性，而且可以做一些meta programming的。
+
+```js
+// good
+function callback(err, arg1, arg2) { // 第一个参数位留给error
+  if (err) { // 先处理error
+    ...
+  }
+
+  ... // 然后是正常逻辑
+}
+
+// bad
+function callback(arg1, arg2, err) { // err不是第一个参数
+  ...
+}
+```
+
+## 如果函数参数有callback，那么callback必须是最后一个参数
+
+这也是源自nodejs的编程约定。
+
+```js
+// good
+function sendRequest(value, type, callback) { // callback是最后一个参数
+  ...
+}
+
+function sendRequest(callback, value, type) { // callback不是最后一个参数
+  ...
+}
+```
 
 # [语法、特性]
 
