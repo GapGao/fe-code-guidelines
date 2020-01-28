@@ -1073,15 +1073,90 @@ if (eventName === 'click') {
 const eventHandler = handlers['on' + eventName];
 ```
 
-## 禁止向object动态注入function
+## 禁止私自修改依赖库的行为
+
+私自修改依赖库的行为（比如扩展已有方法或新增方法）有两个问题：
+
+1. 会让其他维护代码人感到迷惑。因为这是一个非常隐晦的动作，其他人完全不知道依赖库的行为变了，变成什么样了、在哪变的都不清楚。
+2. 会让依赖库的升级迁移变得困难。时间久了就变成一个阻碍技术栈升级的坑。
+
+所以，通常情况下是禁止扩展依赖库行为的。
+
+```js
+// bad
+import RcTable from 'rc-table';
+
+RcTable.customLogic = () => { // 这里给RCTable注入了一个自定义方法
+  ...
+}
+```
+
+即使迫不得已需要扩展依赖库的行为，也千万不要在代码里直接修改，推荐的做法是fork依赖库代码，然后重新发包。这样一来做了哪些改动、谁做的改动都相对更加清楚，相对更容易维护。
 
 ## 禁止修改prototype
 
+js的原型链继承比较隐晦，而且是动态特性无法被编译器识别，难以维护。绝大部分情况下都不需要修改prototype，所以禁止修改。
+
+```js
+// bad
+String.prototype.utils = function() {
+  ...
+}
+```
+
+## 禁止对类对象使用spread操作符
+
+因为spread操作符只会对对象的[own enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties)生效，也就是Object.keys或for...in能得到的properties。
+
+如果你操作的对象是由普通的object literal构造得到的，那就没有问题，否则就可能得到意料之外的结果。
+
+```js
+// good
+const a = new Util();
+const b = Object.assign(a, { foo: () => {} }); // 需要使用Object.assign
+
+// bad
+const a = new Util();
+const b = { ...a, foo: () => {} };
+```
+
 ## 禁止抛出Error以外的东西
+
+这是一个常识，只有Error类型的对象才可以抛出，以便异常捕获能够正常获取到Error相关的信息，例如函数栈、错误信息等。
+
+```js
+// good
+throw new Error('hahaha');
+
+// bad
+throw 'hahaha';
+```
+
+如果你想在抛出的Error对象里注入一些东西，注意不能写错：
+
+```js
+// good
+throw Object.assign(new Error('hahaha'), { context: {} });
+
+// bad
+throw { ...new Error('hahaha'), context: {} };
+```
+
+原因见上一条。
 
 ## 禁止擅自引入新的stage-x特性（必须与leader沟通讨论）
 
+js的实验特性非常不稳定，无论是语法还是效果，随时有可能发生改动，这些特性在个人小项目里玩玩是没问题的，但是在大型企业级项目里是不允许的，因为会增加维护成本。
+
+此外babel插件越多，越难以迁移到typescript。
+
 ## 禁止擅自引入npm包（必须与leader沟通讨论）
+
+node生态的优点是繁荣，但是同时带来的巨大缺点是低质量。大量垃圾package充斥在npm里，引入一个低质量的包（代码质量差或者不维护）简直后患无穷，甚至会成为阻碍技术栈升级的罪魁祸首。
+
+此外还有一个问题是，有些包大而全，但我们只用到其中一小部分的功能，导致前端代码打包的时候体积过大。
+
+在个人项目或者快速开发时期，引入一些包解决现成的问题是合适的做法，但是一旦项目变大了，需要长时间维护的时候，引用第三方包就必须要慎重，必须与对应leader讨论才行，禁止随意引入。
 
 # [React]
 
