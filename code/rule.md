@@ -1160,23 +1160,180 @@ node生态的优点是繁荣，但是同时带来的巨大缺点是低质量。�
 
 # [React]
 
-## 组件必须写propTypes
+## 组件用到的props必须有propTypes
 
-## 组件的propTypes必须按照样式、配置、数据、动作的顺序排列
+propTypes虽然无法起到强制类型检查的效果，但是至少能让维护组件的人知道组件的用法，提升代码可读性。
+
+```js
+// good
+class MyComponent extends React.Component {
+  static propTypes = {
+    ...
+  }
+
+  ...
+}
+
+// function组件也需要写propTypes
+function MyComponent() {
+  ...
+}
+
+MyComponent.propTypes = {
+  ...
+};
+```
+
+## 组件的props必须按照样式、配置、数据、动作的顺序排列
+
+这个规则主要是为了提升代码整洁程度，从而有利于阅读和理解代码。
+
+一个组件可能有许多props，根据他们的用途（或者说类型）大致分成了4类：
+
+1. 样式相关。比如style对象、className等，这种属性很通用使用频率也很高，所以放在第一个。
+2. 配置相关。比如disable、mode等，通常会是一些boolean类型的props。这种属性通常比较重要，所以放在第二个。
+3. 数据相关。比如data、value等。React单向数据流中的“数据向下”，指的就是这些属性。
+4. 动作相关。比如onChange、onSubmit、onClose等触发动作，都是function类型。React单向数据流中的“动作向上”，指的就是这些属性。
+
+```js
+// good
+<DepartmentSelector
+  className="container"
+  activeClassName="active"
+  collapseMode={true}
+  showLines={true}
+  visibleCount={30}
+  valueRenderer={valueRenderer}
+  departments={allDepartments}
+  onClick={onClick}
+  onAddDepartment={onAdd}
+/>
+
+// bad
+<DepartmentSelector
+  departments={allDepartments}
+  onClick={onClick}
+  valueRenderer={valueRenderer}
+  showLines={true}
+  className="container"
+  collapseMode={true}
+  activeClassName="active"
+  visibleCount={30}
+  onAddDepartment={onAdd}
+/>
+```
+
+如果组件的props都能遵守这个规则，不但看着整洁，找东西也更容易。
+
+## event handler函数以on*命名
+
+因为这样更符合传统，看着更顺眼。
+
+```js
+// good
+<MyComponent onClick={...}/>
+
+// bad
+<MyComponent handleClick={...}/>
+```
 
 ## 禁止在render函数中产生副作用
 
+带副作用的render函数是各种bug的源泉
+
+```js
+// very bad
+render() {
+  setInterval(() => {
+    ...
+  }, 1000);
+}
+```
+
 ## 禁止使用spread操作符给组件传参
 
-## 禁止UGC业务使用dangerouslyInnerHTML
+spread形式传参虽然写起来省劲儿，但是最主要的问题是无法看出传了什么东西，是非常动态的写法。比如这样一段写法：
 
-## 禁止index做key
+```js
+<MyComponent {...props}/>;
+```
+
+MyComponent到底传了什么props呢？完全无法得知，必须向上追溯到props的定义才行。
+
+如果其他开发者向props里增加了一些field，这些新增的props就会随着spread操作符一起传递到了MyComponent组件里，万一恰好shadow了某个有用的属性，bug就产生了，而且非常难以发现。
+
+总之就是非常不利于维护。
+
+```js
+// good
+<MyComponent value={this.props.value} options={this.props.options} onChange={this.props.onChange}/>
+
+// bad
+<MyComponent {...this.props}/>
+```
+
+## 禁止UGC业务使用dangerouslySetInnerHTML
+
+dangerouslySetInnerHTML有XSS风险。
+
+```js
+// bad
+<div dangerouslySetInnerHTML={{ __html: '' }}/>
+```
+
+## 禁止使用数组索引做key
+
+数组索引做key容易导致bug，比如删除数组中某一项无法触发update。即使明确知道index做key没有问题也不要用index做key，因为其他维护者在修改代码的时候可能遇到问题。
+
+```js
+// good
+users.map((user) => {
+  return <li key={user.id}>{user.name}</li>;
+})
+
+users.map((user, index) => {
+  return <li key={index}>{user.name}</li>;
+})
+```
 
 ## 禁止不必要的jsx嵌套
 
+既然没必要，就不应该出现。
+
+```js
+// good
+<div>
+  hello, world
+</div>
+
+// bad
+<div>
+  <div> <!-- 这里的div是没有必要的 -->
+    hello, world
+  </div>
+</div>
+```
+
 ## redux action必须遵守FSA标准
 
+既然有标准，就应该遵守：
 [FSA(Flux Standard Action)标准](https://github.com/acdlite/flux-standard-action)
+
+```js
+// good
+dispatch({
+  type: UPDATE_USER,
+  payload: {
+    ...
+  },
+});
+
+// bad
+dispatch({
+  type: UPDATE_USER,
+  users: allUsers, // 数据没有放在payload里
+})
+```
 
 # [样式]
 
