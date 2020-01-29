@@ -1339,18 +1339,250 @@ dispatch({
 
 ## 样式属性必须按照定位、盒模型、文字、其他的顺序排列
 
+这个规则同样是为了提升代码整洁程度，有利于阅读和理解代码。
+
+根据功能和常用程度，我们把CSS样式大致分成了4类
+
+1. 定位。比如position、left、top、z-index等。定位属性非常常见，而且对元素的样式影响非常重要，所以放在第一位。
+2. 盒模型。比如display、box-sizing、width、height、padding、margin等。盒模型属性也非常常见，而且对元素的样式影响也非常大，这里排在第二位。
+3. 文字样式。比如font-size、line-height、color等。文字样式也是比较常见的样式，排在第三位。
+4. 其他样式。比如background、border、shadow等。这些样式不如前面的样式使用得频繁，排在最后。
+
+```css
+/* good */
+.message {
+  position: absolute;
+  left: 200px;
+  z-index: 5;
+  box-sizing: border-box;
+  width: 300px;
+  height: 200px;
+  padding: 10px 14px;
+  margin: 20px;
+  font-size: 22px;
+  color: #FCFCFC;
+  border-radius: 4px;
+  border: 1px solid #ECECEC;
+}
+
+/* bad */
+.message {
+  color: #FCFCFC;
+  border-radius: 4px;
+  margin: 20px;
+  position: absolute;
+  width: 300px;
+  height: 200px;
+  border: 1px solid #ECECEC;
+  left: 200px;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-size: 22px;
+  z-index: 5;
+}
+```
+
+## 选择器命名使用kebab-case
+
+因为CSS中的属性就是kebab-case，应该保持风格统一。
+
+```css
+/* good */
+.message-body {
+  font-size: 20px;
+}
+
+/* bad */
+.messageBody {
+  font-size: 20px;
+}
+
+.message_body {
+  font-size: 20px;
+}
+```
+
 ## 必须使用CSS Modules
+
+CSS Modules能够有效防止CSS样式污染的问题，除非一些极其common的样式（比如normalize.css）外，都应该使用CSS Modules
+
+CSS Modules的命名方式为，js中使用驼峰命名，推荐使用最基本的引入方法，即：
+
+```js
+import styles from './component.css';
+
+<div className={styles.container}>hello</div>
+```
+
+有些人喜欢用css bind引入样式，比如：
+
+```js
+import classNames from 'classnames';
+import styles from './component.css';
+
+const cx = classNames.bind(styles);
+
+<div className={cx('container')}>hello</div>
+```
+
+这种方式显得比较乱，容易混合camelCase和kebab-case，而且属于动态写法无法利用静态分析的工具，此外从写法上讲并没有简化多少，总之不推荐。
+
+## 默认使用box-sizing: border-box
+
+border-box更直观，非特殊情况一律使用border-box
+
+这个规则通常会被内置到normalize.css中，比如
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+所以开发过程中通常不需要在意。
 
 ## 禁止使用tag做选择器
 
+禁止使用tag选择器有三个原因：
+
+1. tag选择器可读性差
+
+比如下面的例子：
+
+```css
+.message > span > div {
+  ...
+}
+```
+
+这是要匹配什么元素？令人迷惑，也不敢轻易修改，几乎是无法维护的代码。
+
+2. DOM结构容易产生变化，不是很稳定，因而tag选择器也不够稳定。
+
+比如下面的例子，对.message下的span标签增加样式：
+
+```css
+.message > span {
+  ...
+}
+```
+
+如果其他维护者将DOM的span改成了div，那么样式就丢了。又或者其他维护者在span里又增加了一层span，那么也会被匹配到，产生非期望的效果。
+
+3. tag选择器无法利用CSS Modules
+
+由于无法被CSS Modules覆盖，所以就有污染全局样式的可能。
+
+所以，禁止用tag选择器。凡是用tag选择器的地方通常都可以用class选择器代替。
+
+```css
+/* good */
+.message > .body > .title {
+  font-size: 20px;
+}
+
+/* bad */
+.message > span > div {
+  font-size: 20px;
+}
+```
+
 ## 禁止使用!important
+
+`!important`是CSS中的毒品，简单粗暴效果立竿见影，用着贼爽，所以很容易成瘾导致被滥用。多少优秀的开发者也知道滥用!important是不对的，但是就是忍不住。
+
+滥用!important的危害有两个：
+
+1. 它会导致样式完全无法扩展。因为没有办法覆盖了。
+
+2. 一旦important侵入代码，再要想去掉非常困难（因为去掉!important会在哪里造成什么影响是不可知的）。
+
+不要有侥幸心理，显示生活对毒品的打击力度多大，CSS中对!important的打击力度就有多大。
+
+有人会问了，我用!important就是为了覆盖样式，如果不让写!important该怎么办呢？答案是增加class提示选择器的优先级。
+
+```css
+.message.prior-fix { /* 这里的prior-fix就是为了提升选择器的优先级 */
+  ...
+}
+```
 
 ## 禁止不必要的选择器嵌套
 
+开启了CSS Modules后，不用再担心CSS全局样式污染的问题。嵌套选择器的做法除了不必要地增加了选择器的优先级之外，没有任何意义。
+
+```less
+// good
+.message-title {
+  ...
+}
+
+// bad
+.message {
+  .title { // 这样会使这个选择器的优先级是两个class，当其他人想要覆盖的时候就得用三个class才行...
+    ...
+  }
+}
+```
+
 ## 禁止使用stylus的&拼接选择器
 
+用`&`拼接选择器是一种动态的行为，会使代码变得琐碎，很难理解和定位。
+
+过去，我们使用BEM命名规则，class通常都很长，使用`&`辅助拼接可以在开发上提示不少效率，但是开启CSS Modules后，class名字可以写得很短，而且也没有要在包含namespace信息了。使用`&`带来的收益就很小了。
+
+比如像下面的代码，几乎无法看出完整的class是什么，维护起来非常困难，想要搜索`.message__body__title`，直接在代码中检索是搜不到的。
+
+```stylus
+// bad
+.message
+  &__body
+    &__title
+      ...
+    &__content
+      ...
+  &__footer
+    &__action
+      ...
+}
+```
+
+正确的做法是：
+
+```stylus
+.message-body-title
+  ...
+
+.message-body-content
+  ...
+
+.message-footer-action
+  ...
+```
+
 ## 禁止使用float做定位
+
+float属性被发明出来是用来做图文混排的，不是用来做定位的。此外，float属性有很多副作用，要想正常使用往往还要熟悉各种清楚浮动的方法。
+
+过去在浏览器兼容性较差的时候，我们用float做定位那是迫不得已。现在环境改善很多了，再用float做定位非傻即坏。
+
+多用flex。
+
+```css
+/* good */
+.message {
+  float: left;
+}
+
+/* bad */
+.message {
+  position: absolute;
+  left: 0;
+}
+```
 
 # [网络]
 
 ## 自定义HTTP头部必须以X开头
+
+这是规范，没什么好商量的。
