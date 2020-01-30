@@ -75,30 +75,6 @@ const isEmpty = value === 0 || !value;
 // Lishunyang: 这里的代码暂时没有拆分，因为等XXX功能上线后，这些代码将会被废弃掉，到时候直接删除即可，目前为了兼容先留着
 ```
 
-# [格式]
-
-## 尽量减少缩进
-
-缩进通常是代码块嵌套的结果，而代码块嵌套会破坏代码的连贯性，显得参差不齐，增加记忆负担。
-
-应该尽量减少缩进，让代码更加连贯、平坦。
-
-```js
-// good
-if (condition1 && condition2 && condition3) {
-  ...
-}
-
-// bad
-if (condition1) {
-  if (condition2) {
-    if (condition3) {
-      ...
-    }
-  }
-}
-```
-
 # [命名]
 
 ## 函数名字采用动词+对象或动词的形式
@@ -220,44 +196,334 @@ foo('张三', false, true, 'hello');
 
 this是js的糟粕，尽量少用。
 
-## if嵌套层级不要超过3层，超过3层考虑重构代码逻辑
+## 避免if判断条件的表达式过于复杂
 
-## else if的数量最好不要超过3个
+if是非常常见的语句，如果里面的条件太复杂，代码可读性比较差，应该在条件比较复杂的时候适当重构，将一些运算拿到外面去。
 
-## if条件运算符数量最好不要超过3个，如果超过3个尽量抽离成独立的变量
+```js
+// bad
+if (a && ((b || c || d) && e) && f) {
+  ...
+}
 
-## 三目运算尽量不要与其他运算符混用，否则应该尽量使用if/else
+// good
+const g = (b || c || d) && e;
+if (a && g && f) {
+  ...
+}
+```
 
-## 尽量避免不必要的递归
+## 三元运算符表达式尽量简单，更推荐使用if/else
+
+三元运算符写起来简单，但是当条件或者是表达式比较复杂的时候，三元运算符的可读性会急剧下降，尤其是当出现多个三元运算符同时出现的时候。此时推荐用if/else。
+
+```js
+// bad
+const result = (a && ((b || c || d) && e) && f) ? g + i ? j : k : l;
+
+// good
+let result = null;
+if (a && ((b || c || d) && e) && f) {
+  result = g + i ? j : k;
+} else {
+  result = l;
+}
+```
+
+## 慎用递归
+
+递归逻辑不是很好理解，大部分时候尽量用循环吧，可别小看了循环，它不但比递归更容易理解，而且比递归的性能更好（没有调用栈空间开销）。
+
+一个经验规则是：如果一个问题用循环就可以很直观地解决，那就一定不要用递归。
+
+很多人喜欢用递归是觉得递归写起来代码简单，看着更高级，其实要想写出逻辑清晰且无bug的递归不是一件容易的事情。如果迫不得已要写递归的情景，这里有2个建议：
+
+1. 先判断边界条件，再处理递归内容。递归边界决定了什么时候递归应该终止，这部分逻辑应当尽量与递归内容分开，这样做可读性更好而且不容易遗漏。
+2. 递归调用的地方要明显且有规律，且越少越好。因为对于阅读代码的人来说，每到一个递归调用的地方，都需要花费额外的脑力记忆一些东西，所以递归调用越少，代码理解起来越容易，而且不容易产生遗漏。
+
+举个例子：
+
+```js
+function qsort(array, start, end) {
+  // 先判断递归边界，什么时候递归终止
+  if (start >= end) {
+    return;
+  }
+
+  // 然后是递归主体
+  const pivot = array[start];
+  let l = start;
+  let r = end;
+  while (l < r) {
+    while (l < r && array[r] >= pivot) {
+      r--;
+    }
+    array[l] = array[r];
+    while (l < r && array[l] <= pivot) {
+      l++;
+    }
+    array[r] = array[l];
+  }
+  array[l] = pivot;
+
+  // 递归调用入口尽量有规律
+  sort(array, start, l - 1);
+  sort(array, l + 1, end);
+}
+```
 
 ## 尽量避免带副作用的函数
 
-## 尽量不要向object动态注入field
+副作用的意思是，函数内部的逻辑影响到了函数外部的世界，本质上是由于共享了全局变量导致的。
+
+有副作用的函数会形成调用顺序依赖，比如：
+
+```js
+... // I
+foo();
+... // II
+```
+
+如果foo是带有副作用的，我们就不能随意将I和II的代码调换位置，这对于代码重构来说简直是噩梦。一些诡异的bug也会因此产生。
+
+所以尽量不要用带副作用的函数。
+
+如果真的要用带有副作用的函数，请一定确保这个副作用的产生过程非常明显（比如增加注释，或者foo的名字一眼上去就知道是带副作用的）。
+
+## 初始化结束后尽量不要改变object的结构特征
+
+什么叫改变object的结构特征呢？比如：
+
+```js
+const a = {
+  bar: () => {
+    ...
+  },
+};
+
+// 向a中注入或者移除函数field就算是改变了结构特征
+a.foo = () => {
+  ...
+};
+delete a.bar;
+```
+
+因为这种逻辑也会产生调用顺序依赖，其实本质上都是因为对数据进行了写操作，数据导致了依赖。
+
+不过如果object本身是用来做mapping的，这个就无所谓了，比如：
+
+```js
+const userIdToEmail {
+  1: '123@example.com',
+};
+
+delete userIdToEmail.1; // 这是没有问题的
+```
 
 ## 增强代码的局部性
 
-## 适当添加空行分割代码逻辑块避免过于拥挤
+局部性的意思是，相同目的或用处的代码尽量放在一起，有利于理解代码，维护起来也更方便。
 
-## 尽量减少block的嵌套（比如if）
+变量的申明和使用尽量放在一起就是一个例子。
+
+## 适当添加空行分割代码，避免过于拥挤
+
+代码缺少空行，就好像说话缺少标点，没有停顿和节奏。所以应该适当添加一些空行。
+
+## 尽量代码块的嵌套
+
+代码块嵌套会破坏代码的连贯性，显得参差不齐（缩进多了），增加记忆负担。
+
+应该尽量减少嵌套，让代码更加连贯、平坦。
+
+```js
+// good
+if (condition1 && condition2 && condition3) {
+  ...
+}
+
+// bad
+if (condition1) {
+  if (condition2) {
+    if (condition3) {
+      ...
+    }
+  }
+}
+```
 
 ## 查询逻辑尽量多使用树形数据结构（例如Map、Set）以及insert、has等方法，少用线性数据结构（例如Array）以及includes、find等方法
+
+Map、Set等数据结构的查询效率很高，应当多使用。过多使用array的includes、find等方法容易产生性能问题（当数据量大的时候，比如数组长度超过一千，还是比较容易出现的）。
+
+而且Map、Set的方法写起来也更加简洁易懂。
+
+```js
+// good
+const nameSet = new Set(['Duke', 'Jason', 'Rose']);
+nameSet.has('Ross');
+
+// bad
+const names = ['Duke', 'Jason', 'Rose'];
+names.includes('Ross');
+```
+
+其实Set用得更多一些，因为Map可以用js的object替代。
 
 # [React]
 
 ## 尽量避免state和props之间的依赖
 
+state依赖props是一种anti-pattern（不好的写法），因为如果props变化了，state就需要做更新，这个逻辑容易被忽略而导致一些奇怪的bug。
+
+比如下面的代码，state的初始值依赖了props：
+
+```jsx
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      a: props.a,
+    };
+  }
+
+  componentDidMount() { // 这两个生命周期必须要有，缺一不可
+    this.setState({ a: this.props.a });
+  }
+
+  componentDidUpdate() { // 这两个生命周期必须要有，缺一不可
+    this.setState({ a: this.props.a });
+  }
+}
+```
+
+想想为什么会写出state依赖props的逻辑？能否把state去掉然后将组件重构为stateless的？
+
+如果迫不得已需要state依赖props，除了componentDidMount和componentDidUpdate两个生命周期函数必须修改之外，建议将props的名字改成更加明显的能够体现初始值含义的。比如：
+
+```jsx
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      a: props.initialA,
+    };
+  }
+
+  componentDidMount() { // 这两个生命周期必须要有，缺一不可
+    this.setState({ a: this.props.initialA });
+  }
+
+  componentDidUpdate() { // 这两个生命周期必须要有，缺一不可
+    this.setState({ a: this.props.initialA });
+  }
+}
+```
+
 ## 局部状态不应该放在redux里
+
+可以认为redux就是React组件的全局状态，同理，不是全局共享的状态就不要写在redux里了。典型的有一些组件内部的loading状态，数据校验状态等。
+
+无论什么东西都丢给redux的结果是让redux变得臃肿、复杂。而redux里的东西是动态注入到组件里的，没有静态分析的办法，到时候想清理redux会非常困难。
+
+此外，每次redux更新都会触发所有connect到redux的组件的mapStateToProps或者是render，也会有不必要的性能损耗。
+
+## mapStateToProps不能存在耗时的计算
+
+这是redux的原理决定的，每次redux里有新的state更新，就会把所有connect组件的mapStateToProps或者render调用一次，如果mapStateToProps里恰好有非常耗时的计算，那么对性能的影响将非常显著。
+
+如果真的有耗时的计算，可以考虑memoize缓存。
 
 ## 筛选条件应该保存于url中
 
-## 尽量避免props透传
+浏览器地址栏其实也可以看作是一个数据源，筛选条件保存在url里而不是state里的好处是当用户刷新页面的时候，选项都在，而且也便于用户收藏。
 
-## 应该使用cursor方式分页
+## 尽量避免大量props透传
+
+props透传的意思是：
+
+```jsx
+// MyComponent本身用不到props.a和props.b，这两个会原封不动地传给children
+function MyComponent(props) {
+  return <div><InnerComponent a={props.a} b={props.b}/></div>;
+}
+```
+
+透传的问题是让props无关的组件也与props产生了耦合，令人迷惑，看上去也很傻。
+
+其实现实情况里，难免出现props透传的情况，尤其是一些公共组件库内部组合的场景。但如果一个组件有大量的props是透传的，那就需要好好斟酌一下了，是否这是有必要的，能否通过重构去除掉。
+
+## 加载更多逻辑推荐使用cursor
+
+这个其实与后端关系更大。
+
+cursor的使用逻辑为：每次前端请求完一页数据后，后端除了返回这一页的数据外，还会返回一个cursor，当前端再次请求更多数据时，只需要将cursor回传给后端即可。
+
+这样做的好处是下次加载更多的时候只需要传一个cursor，而这个cursor是后端在第一次返回的，相当于整个过程对前端透明。后端可以随意变更cursor的含义或编码，前端当不受影响。
+
+如果不用cursor，通常的做法是前端需要将最后一项的id以及对应排序key的value传给后端，如果要增加其他额外信息（比如不是根据id而是根据name加载更多），前端逻辑就得做修改适配。而cursor方式下是不需要做调整的。
 
 # [样式]
 
 ## 尽量降低选择器的优先级
 
-## 不推荐组合class的方式表达不同状态
+选择器优先级太高的坏处是很难被覆盖，尤其是在做一些公共组件库的时候，自带样式优先级不能太高。
 
-## 在开启CSS Modules的状态下，class名字应该尽量简单
+什么情况会增加选择器优先级呢？
+
+```less
+/* 情况1，class嵌套 */
+.container {
+  .title { // 对应的元素若被匹配到，选择器是两个class的优先级
+    ...
+  }
+}
+
+/* 情况2，class组合 */
+
+.title.active { // 对应的元素若被匹配到，选择器是两个class的优先级
+  ...
+}
+```
+
+以上两个例子，如果用户想要覆盖样式，就必须写三个class的选择器才能在优先级上盖过默认样式，十分蛋疼。
+
+好在上面的例子的解决办法也很简单：
+
+```less
+/* 情况1，使用CSS Modules */
+.title {
+  ...
+}
+
+/* 情况2，不要用class组合 */
+.title-active {
+  ...
+}
+```
+
+## 在开启CSS Modules的状态下，就不要用BEM命名规则了
+
+既然已经开启CSS Modules，就不必担心污染全局作用域了，此时class名字可以尽量简短，写着也方便，BEM规则就没有必要了。
+
+```less
+// good
+.title {
+  ...
+}
+
+.dialog {
+  ...
+}
+
+// bad
+.some-module__title {
+  ...
+}
+
+.other-module__dialog {
+  ...
+}
+```
