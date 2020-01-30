@@ -202,11 +202,7 @@ if (condition) {
 // 本文件需要施工请绕过下面几行
 
 // 打卡围观群众
-//    Xinkai Chen
-//    Eden_cola
-//    Lishunyang
-//    Baishi Liu
-//    Scorpiour
+//   XXX
 ```
 
 # 5. “展示”与“逻辑”分离
