@@ -23,5 +23,5 @@ Front-end Code Guideline
 
 ## Todo List
 
-- [] 给每一个规范都补充好的和不好的例子以及适当解释
+- [done] 给每一个规范都补充好的和不好的例子以及适当解释
 - [] 将Rule整理到eslintrc
