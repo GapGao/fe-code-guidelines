@@ -1274,7 +1274,7 @@ spread形式传参虽然写起来省劲儿，但是最主要的问题是无法�
 
 MyComponent到底传了什么props呢？完全无法得知，必须向上追溯到props的定义才行。
 
-如果其他开发者向props里增加了一些field，这些新增的props就会随着spread操作符一起传递到了MyComponent组件里，万一恰好shadow了某个有用的属性，bug就产生了，而且非常难以发现。
+如果其他开发者向props里增加了一些field，这些新增的props就会随着spread操作符一起传递到了MyComponent组件里，万一恰好shadow了某个有用的属性，bug就产生了，而且非常难以发现。有时候甚至会产生XSS漏洞（比如外部注入了一个dangerouslySetInnerHtml的属性）
 
 总之就是非常不利于维护。
 
