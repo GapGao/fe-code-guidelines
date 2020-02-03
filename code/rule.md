@@ -934,6 +934,28 @@ class A {
 }
 ```
 
+## 禁止在.map的callback带副作用
+
+map应该是无副作用的，这是js甚至所有编程语言的约定，对js来说，如果想做有副作用的迭代逻辑，可以使用forEach。
+
+副作用的意思是callback调用影响到了callback外面的状态。
+
+如果大家都遵从这个约定，代码理解也会更容易，比如你看到一个forEach，那么脑海里立刻紧张起来了，因为你知道这里面有副作用，要小心，如果你看到map那就可以放松，因为map里面怎么折腾也不会影响到外面。
+
+```js
+// good
+const items = [{ value: 1 }, {value: 2 }, { value: 3 }];
+items.forEach((item) => {
+  item.value = item.value * 2;
+});
+
+// bad
+const items = [{ value: 1 }, {value: 2 }, { value: 3 }];
+items.map((item) => {
+  item.value = item.value * 2;
+});
+```
+
 ## 禁止使用eval和Function(...string)
 
 eval和Function(...string)有XSS安全风险，禁止使用。
