@@ -436,6 +436,24 @@ class MyComponent extends React.Component {
 
 如果真的有耗时的计算，可以考虑memoize缓存。
 
+## 带生命周期的组件，componentDidUpdate里逻辑应该加上条件判断
+
+因为componentDidUpdate会被触发多次，如果不加判断地就调用某些逻辑，可能会因为意外触发而产生错误结果。
+
+```js
+// good
+componentDidUpdate(prevProps) {
+  if (prevProps.data !== this.props.data) {
+    doSomething();
+  }
+}
+
+// bad
+componentDidUpdate(prevProps) {
+  doSomething();
+}
+```
+
 ## 筛选条件应该保存于url中
 
 浏览器地址栏其实也可以看作是一个数据源，筛选条件保存在url里而不是state里的好处是当用户刷新页面的时候，选项都在，而且也便于用户收藏。
