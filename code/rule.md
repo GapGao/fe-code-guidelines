@@ -454,7 +454,7 @@ const name = document.getElementById('name');
 
 ## 禁止用2表示“to”、4表示“for”
 
-2和4如果用来表示"to"和"for"，唯一的意义是少写几个字母，可是真的要表示"2"和"4"的含义的时候怎么办呢？比如`http2Status`，是`httpToStatus`还是`http2Status`呢？
+2和4如果用来表示"to"和"for"，唯一的意义是少写几个字母，可是真的要表示"2"和"4"的含义的时候怎么办呢？比如`http2Status`，是`http to status`还是`http2 status`呢？
 
 ```js
 // good
