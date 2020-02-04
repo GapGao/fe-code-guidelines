@@ -917,7 +917,7 @@ const handler = (value) => {
 }
 
 class A {
-  method: () => { // 尤其是class property，更应该使用箭头函数
+  method = () => { // 尤其是class方法，推荐使用箭头函数
     ...
   }
 }
@@ -933,6 +933,8 @@ class A {
   }
 }
 ```
+
+注：用箭头函数做class方法相比传统的写法有一个缺点是会让内存占用升高，不过通常不需要考虑这个问题
 
 ## 禁止在.map的callback带副作用
 
